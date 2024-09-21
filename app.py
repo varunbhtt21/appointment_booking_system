@@ -40,13 +40,15 @@ api = Api(app)
 from resources.appointment import (
     AppointmentSchedule,
     AppointmentCancel,
-    AppointmentReschedule
+    AppointmentReschedule,
+    AppointmentDetail
 )
 
 # Register resources with the API
 api.add_resource(AppointmentSchedule, '/schedule')
 api.add_resource(AppointmentCancel, '/cancel/<int:appointment_id>')
 api.add_resource(AppointmentReschedule, '/reschedule/<int:appointment_id>')
+api.add_resource(AppointmentDetail, '/appointment/<int:appointment_id>')
 
 
 if __name__ == '__main__':
