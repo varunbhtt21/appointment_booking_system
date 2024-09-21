@@ -3,12 +3,12 @@ This module defines the resources for scheduling, canceling, rescheduling, and r
 Each resource corresponds to an API endpoint and handles the necessary logic for appointment management.
 """
 
+import re
 from flask_restful import Resource, reqparse
 from models import Appointment
-from datetime import datetime, date, time
+from datetime import datetime
 from database import db  # Import db from database.py
 from flask import request
-import re
 
 class AppointmentSchedule(Resource):
     """
@@ -34,22 +34,26 @@ class AppointmentSchedule(Resource):
         parser.add_argument('client_name', required=True, help="Client name is required.")
         parser.add_argument('date', required=True, help="Date is required. Format: YYYY-MM-DD")
         parser.add_argument('time', required=True, help="Time is required. Format: HH:MM")
+        parser.add_argument('notes', required=False, type=str)
         args = parser.parse_args()
 
         # Validate the presence of JSON body
         if not request.is_json:
-            return {'error': 'Request body must be JSON.'}, 400
+            return {'error': 'Request body must contain JSON.'}, 400
 
         # Input Length Constraints
         MAX_NAME_LENGTH = 100
+        MAX_NOTES_LENGTH = 1000  # Adjust as needed
+
         if len(args['client_name']) > MAX_NAME_LENGTH:
             return {'error': f"Client name must be at most {MAX_NAME_LENGTH} characters long."}, 400
 
-        # Optional: If you have a 'notes' field during scheduling, handle it here
-        # Example:
-        # parser.add_argument('notes', required=False, type=str)
-        # if 'notes' in args and len(args['notes']) > MAX_NOTES_LENGTH:
-        #     return {'error': f"Notes must be at most {MAX_NOTES_LENGTH} characters long."}, 400
+        # Whitelist Validation: Allow letters, spaces, hyphens, apostrophes, and periods
+        if not re.fullmatch(r"[A-Za-z\s\-'.]{1,100}", args['client_name']):
+            return {'error': 'Client name contains invalid characters.'}, 400
+
+        if args.get('notes') and len(args['notes']) > MAX_NOTES_LENGTH:
+            return {'error': f"Notes must be at most {MAX_NOTES_LENGTH} characters long."}, 400
 
         # Validate and parse date and time
         try:
@@ -78,9 +82,8 @@ class AppointmentSchedule(Resource):
         new_appointment = Appointment(
             client_name=args['client_name'],
             date=appointment_date,
-            time=appointment_time
-            # If 'notes' is part of the model, include it here
-            # notes=args.get('notes', None)
+            time=appointment_time,
+            notes=args.get('notes')
         )
         db.session.add(new_appointment)
         db.session.commit()
@@ -156,15 +159,18 @@ class AppointmentReschedule(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('date', required=True, help="New date is required. Format: YYYY-MM-DD")
         parser.add_argument('time', required=True, help="New time is required. Format: HH:MM")
+        parser.add_argument('notes', required=False, type=str)
         args = parser.parse_args()
 
         # Validate the presence of JSON body
         if not request.is_json:
-            return {'error': 'Request body must be JSON.'}, 400
+            return {'error': 'Request body must contain JSON.'}, 400
 
         # Input Length Constraints
-        # Assuming rescheduling doesn't involve 'client_name'
-        # If there are other fields, apply similar constraints
+        MAX_NOTES_LENGTH = 1000  # Adjust as needed
+
+        if args.get('notes') and len(args['notes']) > MAX_NOTES_LENGTH:
+            return {'error': f"Notes must be at most {MAX_NOTES_LENGTH} characters long."}, 400
 
         # Validate and parse new date and time
         try:
@@ -198,6 +204,8 @@ class AppointmentReschedule(Resource):
         # Update appointment
         appointment.date = new_date
         appointment.time = new_time
+        if args.get('notes'):
+            appointment.notes = args.get('notes')
         db.session.commit()
 
         return {'message': 'Appointment rescheduled successfully.'}, 200
