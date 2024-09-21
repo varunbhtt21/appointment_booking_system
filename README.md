@@ -1,3 +1,5 @@
+DATABASE_URI=sqlite:///appointments.db
+
 # Flask Appointment Booking System
 
 <!-- ![License](https://img.shields.io/badge/license-MIT-blue.svg)

@@ -22,3 +22,4 @@ class Appointment(db.Model):
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)
     status = db.Column(db.String(20), nullable=False, default='scheduled')
+    notes = db.Column(db.Text, nullable=True)

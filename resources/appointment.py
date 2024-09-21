@@ -154,3 +154,30 @@ class AppointmentReschedule(Resource):
         db.session.commit()
 
         return {'message': 'Appointment rescheduled successfully.'}, 200
+
+class AppointmentDetail(Resource):
+    """
+    Resource for retrieving details of a specific appointment.
+    """
+
+    def get(self, appointment_id):
+        """
+        Retrieve details of an appointment by its ID.
+
+        Args:
+            appointment_id (int): The unique identifier of the appointment.
+
+        Returns:
+            tuple: A JSON response with appointment details and an HTTP status code.
+        """
+        appointment = Appointment.query.get(appointment_id)
+        if not appointment:
+            return {'message': 'Appointment not found.'}, 404
+
+        return {
+            'id': appointment.id,
+            'client_name': appointment.client_name,
+            'date': appointment.date.strftime('%Y-%m-%d'),
+            'time': appointment.time.strftime('%H:%M'),
+            'status': appointment.status
+        }, 200
