@@ -1,41 +1,72 @@
-# **Flask Appointment Booking System**
+# Flask Appointment Booking System
 
-## **Project Description**
+<!-- ![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
+![Flask](https://img.shields.io/badge/flask-2.x-green.svg)
+![Heroku](https://img.shields.io/badge/deployed-on-Heroku-purple.svg) -->
 
-This project is a backend system built with Flask that manages appointment scheduling, cancellations, and rescheduling for a service or business. It provides API endpoints for clients to interact with the appointment system, ensuring real-time updates of available slots.
+## Table of Contents
 
-## **Table of Contents**
+- [Flask Appointment Booking System](#flask-appointment-booking-system)
+  - [Table of Contents](#table-of-contents)
+  - [Project Description](#project-description)
+  - [Features](#features)
+  - [Technologies Used](#technologies-used)
+  - [Project Structure](#project-structure)
+  - [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Steps](#steps)
+  - [Configuration](#configuration)
+    - [Environment Variables](#environment-variables)
+  - [Usage](#usage)
+    - [Running Locally](#running-locally)
+  - [API Endpoints](#api-endpoints)
+    - [1. Schedule an Appointment](#1-schedule-an-appointment)
+    - [2. Cancel an Appointment](#2-cancel-an-appointment)
+    - [3. Reschedule an Appointment](#3-reschedule-an-appointment)
+  - [Deployment](#deployment)
+    - [Deploying to Heroku](#deploying-to-heroku)
+      - [1. **Create a Heroku Account**](#1-create-a-heroku-account)
+      - [2. **Install the Heroku CLI**](#2-install-the-heroku-cli)
+      - [3. **Login to Heroku**](#3-login-to-heroku)
+      - [4. **Create a Heroku App**](#4-create-a-heroku-app)
+      - [5. **Add the Heroku Remote**](#5-add-the-heroku-remote)
+      - [6. **Provision the PostgreSQL Add-on**](#6-provision-the-postgresql-add-on)
+      - [7. **Commit and Push Your Code**](#7-commit-and-push-your-code)
+      - [8. **Run Database Migrations**](#8-run-database-migrations)
+      - [9. **Verify Deployment**](#9-verify-deployment)
+      - [10. **Monitor Logs**](#10-monitor-logs)
+  - [Testing](#testing)
+    - [Manual Testing](#manual-testing)
+  - [Contributing](#contributing)
+  - [Contact](#contact)
 
-- [Project Description](#project-description)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+## Project Description
 
-## **Features**
+The **Flask Appointment Booking System** is a backend application designed to manage appointment scheduling, cancellations, and rescheduling for services or businesses. Built with Flask and SQLAlchemy, it offers a RESTful API that allows clients to interact seamlessly with the appointment system, ensuring real-time updates of available slots. The application is deployed on Heroku and utilizes PostgreSQL for robust data management.
 
-- **Appointment Scheduling**: Clients can book appointments by specifying the date, time, and client name.
-- **Cancellation**: Clients can cancel their existing appointments.
-- **Rescheduling**: Clients can reschedule their appointments to a new date and time.
-- **Real-time Availability Handling**: The system updates available slots in real-time as appointments are booked, canceled, or rescheduled.
+## Features
 
-## **Technologies Used**
+- **Appointment Scheduling**: Book appointments by specifying the date, time, and client name.
+- **Cancellation**: Cancel existing appointments.
+- **Rescheduling**: Modify the date and time of existing appointments.
+- **Real-time Availability**: Automatically updates available slots as appointments are managed.
+- **API Documentation**: Comprehensive endpoints for easy integration with front-end applications.
+- **Database Migrations**: Managed using Flask-Migrate for seamless schema changes.
 
-- **Python 3.x**
-- **Flask**: Web framework for building the API.
-- **Flask-RESTful**: Extension for building REST APIs with Flask.
-- **Flask-SQLAlchemy**: ORM for database interactions.
-- **SQLite**: Lightweight database for development and testing.
-- **SQLAlchemy**: Core SQL toolkit and ORM library for Python.
+## Technologies Used
 
-## **Project Structure**
+- **Programming Language**: Python 3.8+
+- **Web Framework**: Flask
+- **API Framework**: Flask-RESTful
+- **Database ORM**: Flask-SQLAlchemy
+- **Database**: PostgreSQL (Heroku Postgres)
+- **Deployment Platform**: Heroku
+- **Web Server**: Gunicorn
+- **Version Control**: Git & GitHub
+- **Environment Management**: python-dotenv
+
+## Project Structure
 
 ```
 appointment_booking_system/
@@ -44,33 +75,40 @@ appointment_booking_system/
 ├── models.py
 ├── resources/
 │   └── appointment.py
+├── migrations/
+│   └── ... (Flask-Migrate files)
 ├── requirements.txt
+├── Procfile
 ├── README.md
 └── .gitignore
 ```
 
-- **app.py**: The main application file that initializes the Flask app, configures the database, and registers API resources.
-- **database.py**: Initializes the SQLAlchemy database object.
+- **app.py**: Initializes the Flask application, configures the database, and registers API resources.
+- **database.py**: Sets up the SQLAlchemy database instance.
 - **models.py**: Defines the database models (e.g., `Appointment`).
-- **resources/appointment.py**: Contains the API resource classes for appointment scheduling, cancellation, and rescheduling.
+- **resources/appointment.py**: Contains API resource classes for managing appointments.
+- **migrations/**: Directory managed by Flask-Migrate for handling database migrations.
 - **requirements.txt**: Lists all Python dependencies.
+- **Procfile**: Specifies the commands Heroku should run to start the application.
 - **README.md**: Documentation of the project.
 - **.gitignore**: Specifies files and directories to be ignored by Git.
 
-## **Installation**
+## Installation
 
-### **Prerequisites**
+### Prerequisites
 
-- **Python 3.x** installed on your system.
+- **Python 3.8+** installed on your system.
 - **pip** package manager.
-- **Virtual environment** tool (optional but recommended).
+- **Git** installed for version control.
+- **Heroku CLI** installed for deployment.
+- **PostgreSQL Account** (e.g., [ElephantSQL](https://www.elephantsql.com/)) for external database hosting.
 
-### **Steps**
+### Steps
 
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/appointment_booking_system.git
+   git clone https://github.com/varunbhtt21/appointment_booking_system
    cd appointment_booking_system
    ```
 
@@ -80,13 +118,13 @@ appointment_booking_system/
    python -m venv venv
    ```
 
-   - **On Windows**
+   - **On Windows:**
 
      ```bash
      venv\Scripts\activate
      ```
 
-   - **On macOS/Linux**
+   - **On macOS/Linux:**
 
      ```bash
      source venv/bin/activate
@@ -98,34 +136,91 @@ appointment_booking_system/
    pip install -r requirements.txt
    ```
 
-## **Usage**
+4. **Set Up Environment Variables**
 
-### **Running the Application**
+   Create a `.env` file in the project root (optional for local development) and add the following:
+
+   ```dotenv
+   DATABASE_URL=postgresql://username:password@hostname:port/database_name
+   FLASK_APP=app.py
+   FLASK_ENV=development
+   SECRET_KEY=your_secret_key
+   ```
+
+   **Note:** Ensure the `.env` file is added to `.gitignore` to prevent sensitive information from being committed.
+
+## Configuration
+
+### Environment Variables
+
+The application uses environment variables to manage configurations securely. Below are the essential variables:
+
+- **`DATABASE_URL`**: Connection string for the PostgreSQL database.
+- **`FLASK_APP`**: Entry point of the Flask application (`app.py`).
+- **`FLASK_ENV`**: Environment mode (`development` or `production`).
+- **`SECRET_KEY`**: Secret key for Flask sessions and security.
+
+**Setting Environment Variables on Heroku:**
 
 ```bash
-python app.py
+heroku config:set DATABASE_URL='postgresql://username:password@hostname:port/database_name'
+heroku config:set FLASK_APP=app.py
+heroku config:set FLASK_ENV=production
+heroku config:set SECRET_KEY='your_production_secret_key'
 ```
 
-- The application will start on `http://localhost:5000`.
-- Ensure that your virtual environment is activated if you're using one.
+## Usage
 
-### **Interacting with the API**
+### Running Locally
 
-Use tools like **Postman**, **cURL**, or any REST API client to interact with the API endpoints.
+1. **Activate the Virtual Environment**
 
-## **API Endpoints**
+   ```bash
+   source venv/bin/activate  # On macOS/Linux
+   # or
+   venv\Scripts\activate  # On Windows
+   ```
 
-### **1. Schedule an Appointment**
+2. **Set Environment Variables**
+
+   ```bash
+   export FLASK_APP=app.py
+   export FLASK_ENV=development
+   export DATABASE_URL=postgresql://username:password@hostname:port/database_name
+   export SECRET_KEY=your_secret_key
+   ```
+
+   **Note:** On Windows Command Prompt, use `set` instead of `export`.
+
+3. **Run Database Migrations**
+
+   ```bash
+   flask db init
+   flask db migrate -m "Initial migration."
+   flask db upgrade
+   ```
+
+4. **Start the Flask Server**
+
+   ```bash
+   flask run
+   ```
+
+   The application will be accessible at `http://localhost:5000`.
+
+## API Endpoints
+
+### 1. Schedule an Appointment
 
 - **URL**: `/schedule`
 - **Method**: `POST`
-- **Description**: Book an appointment by specifying date, time, and client name.
+- **Description**: Book an appointment by specifying the date, time, and client name.
 - **Request Body**:
 
   ```json
   {
     "client_name": "John Doe",
-    "date": "2023-10-15",
+    "date": "2024-10-15",
     "time": "14:00"
   }
   ```
@@ -143,11 +238,10 @@ Use tools like **Postman**, **cURL**, or any REST API client to interact with th
     ```
 
 - **Error Responses**:
-
   - **Status Code**: `400 Bad Request`
     - **Message**: "Invalid date or time format." or "Time slot is not available."
 
-### **2. Cancel an Appointment**
+### 2. Cancel an Appointment
 
 - **URL**: `/cancel/<appointment_id>`
 - **Method**: `POST`
@@ -164,13 +258,12 @@ Use tools like **Postman**, **cURL**, or any REST API client to interact with th
     ```
 
 - **Error Responses**:
-
   - **Status Code**: `404 Not Found`
     - **Message**: "Appointment not found."
   - **Status Code**: `400 Bad Request`
     - **Message**: "Appointment is already canceled."
 
-### **3. Reschedule an Appointment**
+### 3. Reschedule an Appointment
 
 - **URL**: `/reschedule/<appointment_id>`
 - **Method**: `POST`
@@ -179,7 +272,7 @@ Use tools like **Postman**, **cURL**, or any REST API client to interact with th
 
   ```json
   {
-    "date": "2023-10-16",
+    "date": "2024-10-16",
     "time": "15:00"
   }
   ```
@@ -196,199 +289,211 @@ Use tools like **Postman**, **cURL**, or any REST API client to interact with th
     ```
 
 - **Error Responses**:
-
   - **Status Code**: `404 Not Found`
     - **Message**: "Appointment not found."
   - **Status Code**: `400 Bad Request`
     - **Message**: "Cannot reschedule a canceled appointment." or "New time slot is not available." or "Invalid date or time format."
 
-## **Testing**
+## Deployment
 
-### **Manual Testing**
+### Deploying to Heroku
 
-You can manually test the API endpoints using **Postman**, **cURL**, or any REST client.
+Your application is already deployed on Heroku. Here's a summary of the deployment steps for future reference or for others who might use this guide.
 
-**Example cURL Command to Schedule an Appointment**:
+#### 1. **Create a Heroku Account**
+
+Sign up for a free account at [Heroku](https://www.heroku.com/) if you haven't already.
+
+#### 2. **Install the Heroku CLI**
+
+The Heroku CLI allows you to manage and deploy applications from the command line.
+
+- **For macOS/Linux:**
+
+  ```bash
+  curl https://cli-assets.heroku.com/install.sh | sh
+  ```
+
+- **For Windows:**
+
+  Download and run the installer from the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install) page.
+
+#### 3. **Login to Heroku**
 
 ```bash
-curl -X POST http://localhost:5000/schedule \
+heroku login
+```
+
+This command opens a web browser for you to log in.
+
+#### 4. **Create a Heroku App**
+
+```bash
+heroku create your-app-name
+```
+
+Replace `your-app-name` with a unique name for your application. If omitted, Heroku generates a random name.
+
+#### 5. **Add the Heroku Remote**
+
+If you haven't already added the Heroku remote, do so with:
+
+```bash
+heroku git:remote -a appointment-booking-system-be
+```
+
+#### 6. **Provision the PostgreSQL Add-on**
+
+Since Heroku no longer offers free PostgreSQL plans, you'll need to choose a paid plan or use an external PostgreSQL service.
+
+**Using Heroku Postgres (Paid Plan):**
+
+```bash
+heroku addons:create heroku-postgresql:hobby-basic
+```
+
+**Using an External PostgreSQL Service (e.g., ElephantSQL):**
+
+1. **Sign Up** for [ElephantSQL](https://www.elephantsql.com/) and create a new instance.
+2. **Copy the Database URL** provided by ElephantSQL.
+3. **Set the `DATABASE_URL`** environment variable on Heroku:
+
+   ```bash
+   heroku config:set DATABASE_URL='postgresql://username:password@hostname:port/database_name'
+   ```
+
+#### 7. **Commit and Push Your Code**
+
+Ensure all changes are committed:
+
+```bash
+git add .
+git commit -m "Deploy to Heroku"
+```
+
+Push to Heroku:
+
+```bash
+git push heroku main  # or 'master' if your branch is named 'master'
+```
+
+#### 8. **Run Database Migrations**
+
+If using Flask-Migrate:
+
+```bash
+heroku run flask db init
+heroku run flask db migrate -m "Initial migration."
+heroku run flask db upgrade
+```
+
+**Or, using `db.create_all()`:**
+
+```bash
+heroku run python
+```
+
+Inside the Python shell:
+
+```python
+from app import app, db
+
+with app.app_context():
+    db.create_all()
+
+exit()
+```
+
+#### 9. **Verify Deployment**
+
+Access your application via:
+
+```bash
+heroku open
+```
+
+Test the API endpoints to ensure everything is functioning correctly.
+
+#### 10. **Monitor Logs**
+
+To troubleshoot any issues, monitor the Heroku logs:
+
+```bash
+heroku logs --tail
+```
+
+## Testing
+
+### Manual Testing
+
+Use **Postman**, **cURL**, or any REST client to manually test the API endpoints.
+
+**Example cURL Command to Schedule an Appointment:**
+
+```bash
+curl -X POST https://appointment-booking-system-be-2098804bc63d.herokuapp.com/schedule \
      -H "Content-Type: application/json" \
      -d '{
-           "client_name": "John Doe",
-           "date": "2023-10-15",
-           "time": "14:00"
+           "client_name": "Jane Doe",
+           "date": "2024-10-20",
+           "time": "10:00"
          }'
 ```
 
-### **Unit Testing**
+**Expected Response:**
 
-To write unit tests, you can use Python's `unittest` framework or `pytest`. Here's a basic example of how you might set up testing:
+```json
+{
+  "message": "Appointment scheduled successfully.",
+  "appointment_id": 1
+}
+```
 
-1. **Install Testing Dependencies** (if not already installed):
+## Contributing
 
-   ```bash
-   pip install pytest
-   ```
+Contributions are welcome! To contribute to this project, please follow these guidelines:
 
-2. **Create a `tests` Directory**:
+1. **Fork the Repository**
 
-   ```bash
-   mkdir tests
-   ```
+   Click the "Fork" button at the top-right corner of the repository page on GitHub.
 
-3. **Write Test Cases** in `tests/test_app.py`:
-
-   ```python
-   import unittest
-   from app import app
-
-   class AppointmentTestCase(unittest.TestCase):
-       def setUp(self):
-           self.app = app.test_client()
-           self.app.testing = True
-
-       def test_schedule_appointment(self):
-           response = self.app.post('/schedule', json={
-               'client_name': 'Jane Doe',
-               'date': '2023-10-20',
-               'time': '10:00'
-           })
-           self.assertEqual(response.status_code, 201)
-
-       # Add more test cases for canceling and rescheduling
-
-   if __name__ == '__main__':
-       unittest.main()
-   ```
-
-4. **Run the Tests**:
+2. **Clone Your Fork**
 
    ```bash
-   python -m unittest discover tests
+   git clone https://github.com/varunbhtt21/appointment_booking_system
+   cd appointment_booking_system
    ```
 
-## **Deployment**
-
-### **Deploying to Heroku**
-
-1. **Create a Heroku Account** and install the Heroku CLI.
-
-2. **Login to Heroku**:
-
-   ```bash
-   heroku login
-   ```
-
-3. **Create a Heroku App**:
-
-   ```bash
-   heroku create your-app-name
-   ```
-
-4. **Prepare for Deployment**:
-
-   - **Procfile**: Create a file named `Procfile` with the following content:
-
-     ```
-     web: gunicorn app:app
-     ```
-
-   - **Update `requirements.txt`**:
-
-     ```bash
-     pip install gunicorn
-     pip freeze > requirements.txt
-     ```
-
-5. **Commit and Push to Heroku**:
-
-   ```bash
-   git add .
-   git commit -m "Prepare for deployment"
-   git push heroku master
-   ```
-
-6. **Configure the Database**:
-
-   - **Add PostgreSQL Add-on**:
-
-     ```bash
-     heroku addons:create heroku-postgresql:hobby-dev
-     ```
-
-   - **Update Database URI in `app.py`**:
-
-     ```python
-     import os
-     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///appointments.db')
-     ```
-
-7. **Run Database Migrations**:
-
-   ```bash
-   heroku run python
-   ```
-
-   - In the Heroku shell:
-
-     ```python
-     from app import db
-     db.create_all()
-     exit()
-     ```
-
-8. **Verify Deployment**:
-
-   - Access your app at `https://your-app-name.herokuapp.com`.
-   - Test the API endpoints using Postman or cURL with the Heroku app URL.
-
-## **Contributing**
-
-Contributions are welcome! Please follow these steps:
-
-1. **Fork the Project**
-2. **Create Your Feature Branch**
+3. **Create a New Branch**
 
    ```bash
    git checkout -b feature/AmazingFeature
    ```
 
-3. **Commit Your Changes**
+4. **Make Your Changes**
+
+   Implement your feature or bug fix.
+
+5. **Commit Your Changes**
 
    ```bash
-   git commit -m 'Add some AmazingFeature'
+   git commit -m "Add AmazingFeature"
    ```
 
-4. **Push to the Branch**
+6. **Push to Your Fork**
 
    ```bash
    git push origin feature/AmazingFeature
    ```
 
-5. **Open a Pull Request**
+7. **Open a Pull Request**
 
-## **License**
+   Navigate to the original repository on GitHub and click "Compare & pull request."
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+## Contact
 
-## **Contact**
-
-For any inquiries or issues, please open an issue on the repository or contact me at [your-email@example.com].
+For any inquiries or issues, please open an issue on the [GitHub repository](https://github.com/yourusername/appointment_booking_system/issues) or contact me directly at [Email](varunbhatt21@gmail.com).
 
 ---
 
-**Note**: Replace placeholders like `yourusername`, `your-app-name`, and `your-email@example.com` with your actual GitHub username, Heroku app name, and contact email.
-
-### **Additional Tips**
-
-- **Include Screenshots or Diagrams**: If you have any visuals that can help users understand your project better, consider adding them to the README.
-
-- **Provide Examples**: Include more examples of how to use the API, such as error cases or advanced usage.
-
-- **Explain Limitations or Future Work**: Mention any known limitations or features you plan to implement.
-
-- **Ensure Clarity and Correctness**: Review the README for typos, grammatical errors, and ensure all instructions are accurate.
-
----
-
-Feel free to modify and expand upon this `README.md` as needed. If you have any questions or need further assistance, let me know!
+**Note**: Replace placeholders like `yourusername`, `your-app-name`, `your-email@example.com`, and repository URLs with your actual information.
