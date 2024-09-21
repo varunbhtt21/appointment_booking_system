@@ -1,12 +1,14 @@
 """
-This module defines the resources for scheduling, canceling, and rescheduling appointments.
+This module defines the resources for scheduling, canceling, rescheduling, and retrieving appointment details.
 Each resource corresponds to an API endpoint and handles the necessary logic for appointment management.
 """
 
 from flask_restful import Resource, reqparse
 from models import Appointment
-from datetime import datetime
+from datetime import datetime, date, time
 from database import db  # Import db from database.py
+from flask import request
+import re
 
 class AppointmentSchedule(Resource):
     """
@@ -34,12 +36,33 @@ class AppointmentSchedule(Resource):
         parser.add_argument('time', required=True, help="Time is required. Format: HH:MM")
         args = parser.parse_args()
 
+        # Validate the presence of JSON body
+        if not request.is_json:
+            return {'error': 'Request body must be JSON.'}, 400
+
+        # Input Length Constraints
+        MAX_NAME_LENGTH = 100
+        if len(args['client_name']) > MAX_NAME_LENGTH:
+            return {'error': f"Client name must be at most {MAX_NAME_LENGTH} characters long."}, 400
+
+        # Optional: If you have a 'notes' field during scheduling, handle it here
+        # Example:
+        # parser.add_argument('notes', required=False, type=str)
+        # if 'notes' in args and len(args['notes']) > MAX_NOTES_LENGTH:
+        #     return {'error': f"Notes must be at most {MAX_NOTES_LENGTH} characters long."}, 400
+
         # Validate and parse date and time
         try:
             appointment_date = datetime.strptime(args['date'], '%Y-%m-%d').date()
             appointment_time = datetime.strptime(args['time'], '%H:%M').time()
         except ValueError:
-            return {'message': 'Invalid date or time format.'}, 400
+            return {'error': 'Invalid date or time format. Use YYYY-MM-DD for date and HH:MM in 24-hour format for time.'}, 400
+
+        # Check if the appointment date and time are in the future
+        current_datetime = datetime.now()
+        appointment_datetime = datetime.combine(appointment_date, appointment_time)
+        if appointment_datetime <= current_datetime:
+            return {'error': 'Appointment date and time must be in the future.'}, 400
 
         # Check if the slot is available
         existing = Appointment.query.filter_by(
@@ -49,13 +72,15 @@ class AppointmentSchedule(Resource):
         ).first()
 
         if existing:
-            return {'message': 'Time slot is not available.'}, 400
+            return {'error': 'Time slot is not available.'}, 409  # 409 Conflict
 
         # Create new appointment
         new_appointment = Appointment(
             client_name=args['client_name'],
             date=appointment_date,
             time=appointment_time
+            # If 'notes' is part of the model, include it here
+            # notes=args.get('notes', None)
         )
         db.session.add(new_appointment)
         db.session.commit()
@@ -87,11 +112,15 @@ class AppointmentCancel(Resource):
             tuple: A JSON response with a success or error message,
                    and an HTTP status code.
         """
+        # Validate appointment_id type
+        if not isinstance(appointment_id, int):
+            return {'error': 'Invalid appointment ID.'}, 400
+
         appointment = Appointment.query.get(appointment_id)
         if not appointment:
-            return {'message': 'Appointment not found.'}, 404
+            return {'error': 'Appointment not found.'}, 404
         if appointment.status == 'canceled':
-            return {'message': 'Appointment is already canceled.'}, 400
+            return {'error': 'Appointment is already canceled.'}, 400
 
         appointment.status = 'canceled'
         db.session.commit()
@@ -120,23 +149,41 @@ class AppointmentReschedule(Resource):
             tuple: A JSON response with a success or error message,
                    and an HTTP status code.
         """
+        # Validate appointment_id type
+        if not isinstance(appointment_id, int):
+            return {'error': 'Invalid appointment ID.'}, 400
+
         parser = reqparse.RequestParser()
         parser.add_argument('date', required=True, help="New date is required. Format: YYYY-MM-DD")
         parser.add_argument('time', required=True, help="New time is required. Format: HH:MM")
         args = parser.parse_args()
 
-        appointment = Appointment.query.get(appointment_id)
-        if not appointment:
-            return {'message': 'Appointment not found.'}, 404
-        if appointment.status == 'canceled':
-            return {'message': 'Cannot reschedule a canceled appointment.'}, 400
+        # Validate the presence of JSON body
+        if not request.is_json:
+            return {'error': 'Request body must be JSON.'}, 400
+
+        # Input Length Constraints
+        # Assuming rescheduling doesn't involve 'client_name'
+        # If there are other fields, apply similar constraints
 
         # Validate and parse new date and time
         try:
             new_date = datetime.strptime(args['date'], '%Y-%m-%d').date()
             new_time = datetime.strptime(args['time'], '%H:%M').time()
         except ValueError:
-            return {'message': 'Invalid date or time format.'}, 400
+            return {'error': 'Invalid date or time format. Use YYYY-MM-DD for date and HH:MM in 24-hour format for time.'}, 400
+
+        # Check if the new appointment date and time are in the future
+        current_datetime = datetime.now()
+        new_appointment_datetime = datetime.combine(new_date, new_time)
+        if new_appointment_datetime <= current_datetime:
+            return {'error': 'New appointment date and time must be in the future.'}, 400
+
+        appointment = Appointment.query.get(appointment_id)
+        if not appointment:
+            return {'error': 'Appointment not found.'}, 404
+        if appointment.status == 'canceled':
+            return {'error': 'Cannot reschedule a canceled appointment.'}, 400
 
         # Check if the new slot is available
         existing = Appointment.query.filter_by(
@@ -146,7 +193,7 @@ class AppointmentReschedule(Resource):
         ).first()
 
         if existing:
-            return {'message': 'New time slot is not available.'}, 400
+            return {'error': 'New time slot is not available.'}, 409  # 409 Conflict
 
         # Update appointment
         appointment.date = new_date
@@ -170,14 +217,25 @@ class AppointmentDetail(Resource):
         Returns:
             tuple: A JSON response with appointment details and an HTTP status code.
         """
+        # Validate appointment_id type
+        if not isinstance(appointment_id, int):
+            return {'error': 'Invalid appointment ID.'}, 400
+
         appointment = Appointment.query.get(appointment_id)
         if not appointment:
-            return {'message': 'Appointment not found.'}, 404
+            return {'error': 'Appointment not found.'}, 404
 
-        return {
+        # Assuming 'notes' is an optional field in the model
+        response = {
             'id': appointment.id,
             'client_name': appointment.client_name,
             'date': appointment.date.strftime('%Y-%m-%d'),
             'time': appointment.time.strftime('%H:%M'),
             'status': appointment.status
-        }, 200
+        }
+
+        # Include 'notes' if it exists
+        if hasattr(appointment, 'notes') and appointment.notes:
+            response['notes'] = appointment.notes
+
+        return response, 200

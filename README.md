@@ -1,5 +1,3 @@
-DATABASE_URI=sqlite:///appointments.db
-
 # Flask Appointment Booking System
 
 <!-- ![License](https://img.shields.io/badge/license-MIT-blue.svg)
@@ -497,3 +495,12 @@ Contributions are welcome! To contribute to this project, please follow these gu
 For any inquiries or issues, please open an issue on the [GitHub repository](https://github.com/yourusername/appointment_booking_system/issues) or contact me directly at [Email](varunbhatt21@gmail.com).
 
 ---
+
+<!--
+git add .
+git push origin main
+git push heroku main
+heroku run -- flask db upgrade
+heroku restart
+heroku logs --tail
+heroku open -->
