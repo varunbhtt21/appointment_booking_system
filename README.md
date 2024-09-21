@@ -495,5 +495,3 @@ Contributions are welcome! To contribute to this project, please follow these gu
 For any inquiries or issues, please open an issue on the [GitHub repository](https://github.com/yourusername/appointment_booking_system/issues) or contact me directly at [Email](varunbhatt21@gmail.com).
 
 ---
-
-**Note**: Replace placeholders like `yourusername`, `your-app-name`, `your-email@example.com`, and repository URLs with your actual information.
