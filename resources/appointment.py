@@ -10,6 +10,19 @@ from datetime import datetime
 from database import db  # Import db from database.py
 from flask import request
 
+class Home(Resource):
+    """
+    Resource for the root endpoint.
+    Provides a welcome message.
+    """
+    def get(self):
+        """
+        Handles GET requests to the root endpoint.
+        Returns a welcome message.
+        """
+        return {'message': 'Welcome to the Flask Appointment Booking System!'}, 200
+
+
 class AppointmentSchedule(Resource):
     """
     Resource for scheduling new appointments.

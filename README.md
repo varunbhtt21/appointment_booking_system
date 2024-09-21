@@ -1,13 +1,19 @@
 # Flask Appointment Booking System
 
-<!-- ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
+<!-- ![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)
 ![Flask](https://img.shields.io/badge/flask-2.x-green.svg)
 ![Heroku](https://img.shields.io/badge/deployed-on-Heroku-purple.svg) -->
+
+## Introduction
+
+The **Flask Appointment Booking System** is a web application that allows users to schedule, cancel, reschedule, and view appointment details seamlessly. Built with Flask, RESTful APIs, and deployed on Heroku, this system ensures efficient appointment management for businesses and individuals alike.
+
+**Try it out here:** [Live Demo](https://appointment-booking-system-be-2098804bc63d.herokuapp.com)
 
 ## Table of Contents
 
 - [Flask Appointment Booking System](#flask-appointment-booking-system)
+  - [Introduction](#introduction)
   - [Table of Contents](#table-of-contents)
   - [Project Description](#project-description)
   - [Features](#features)
@@ -500,6 +506,7 @@ For any inquiries or issues, please open an issue on the [GitHub repository](htt
 git add .
 git push origin main
 git push heroku main
+heroku run -- flask db migrate -m "Add AppointmentDetail API endpoint"
 heroku run -- flask db upgrade
 heroku restart
 heroku logs --tail

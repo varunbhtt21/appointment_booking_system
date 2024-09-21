@@ -41,7 +41,8 @@ from resources.appointment import (
     AppointmentSchedule,
     AppointmentCancel,
     AppointmentReschedule,
-    AppointmentDetail
+    AppointmentDetail,
+    Home
 )
 
 # Register resources with the API
@@ -49,6 +50,7 @@ api.add_resource(AppointmentSchedule, '/schedule')
 api.add_resource(AppointmentCancel, '/cancel/<int:appointment_id>')
 api.add_resource(AppointmentReschedule, '/reschedule/<int:appointment_id>')
 api.add_resource(AppointmentDetail, '/appointment/<int:appointment_id>')
+api.add_resource(Home, '/')
 
 
 if __name__ == '__main__':
